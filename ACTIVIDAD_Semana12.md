@@ -1,6 +1,6 @@
 # Actividad — Semana 12: Integración Continua con GitHub Actions
 
-**Objetivo:** dejar un pipeline que ejecute los 59 tests en cada pull request, con PostgreSQL real, y una regla que impida fusionar a `main` si falla.
+**Objetivo:** poner en marcha el pipeline que ya trae el proyecto, entender cada línea, y comprobar que ejecuta los 59 tests con PostgreSQL real y que una regla impide fusionar a `main` si falla.
 
 **Tiempo estimado:** 60 a 75 minutos.
 
@@ -8,9 +8,9 @@
 
 Necesitas: cuenta de GitHub, Git, Docker Desktop, `uv` y Python 3.14 (lo instala `uv`).
 
-Todo el trabajo se hace en **tu propio repositorio**, creado a partir de la plantilla del curso. Las reglas de rama y los secrets se crean en un repositorio que sea tuyo.
-
-## Preparación
+El repositorio trae el workflow listo en `.github/workflows/ci.yml`. **No lo escribes: lo lees, lo ejecutas y lo pones a prueba.** Todo el trabajo se hace en **tu propio repositorio**, creado a partir de la plantilla del curso. Las reglas de rama y los secrets se crean en un repositorio que sea tuyo.
+ 
+## Preparación test
 
 1. En GitHub, abre `DrSolonius/CD_CI_sistema_academico` y pulsa **Use this template**, luego **Create a new repository**. Ponle el nombre que quieras, déjalo **Public** y créalo en tu cuenta.
 2. Clona **tu repositorio** (cambia `TU_USUARIO` y, si lo cambiaste, el nombre):
@@ -31,110 +31,51 @@ uv run pytest
 
 Debes ver `59 passed`. Si ves `Faltan variables para la base de pruebas`, falta alguna línea `TEST_DB_*` en tu `.env`. Para levantar la API (no para los tests) completa además `JWT_SECRET` y `ADMIN_PASSWORD`.
 
-> El repositorio no trae ningún workflow: la carpeta `.github/workflows/` no existe, y la creas tú en la Parte 1.
-
 ---
 
-## Parte 1 — Un workflow mínimo (rojo esperado)
+## Parte 1 — Leer el workflow
 
-Crea una rama de trabajo y, dentro, la carpeta y el archivo `.github/workflows/ci.yml`:
+Abre `.github/workflows/ci.yml` y responde, mirando el archivo:
 
-```bash
-git switch -c mi-ci
-```
+- ¿Qué eventos lo disparan?
+- ¿Qué hace el bloque `services`? ¿Para qué sirve el `--health-cmd`?
+- ¿De dónde sale la contraseña de la base?
+- ¿Cuáles son los cuatro pasos (`steps`) y qué hace cada uno?
+- ¿Qué cambia el `permissions: contents: read`?
 
-Contenido de `ci.yml`:
+**Pregunta 1:** ¿por qué la base de datos de CI se declara dentro del workflow y no usa tu `docker-compose.yml`?
 
-```yaml
-# .github/workflows/ci.yml
-name: CI
+## Parte 2 — Ejecutarlo: primero rojo, después verde
 
-on:
-  push:
-    branches: [main]
-  pull_request:
-
-jobs:
-  tests:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-
-      - uses: astral-sh/setup-uv@v10.3.3
-
-      - run: uv sync --group dev
-
-      - run: uv run pytest
-```
-
-Súbelo y abre un pull request de `mi-ci` hacia `main` en tu repositorio:
+1. Crea una rama, haz un cambio mínimo (por ejemplo, una línea en `README.md`) y abre un pull request hacia `main` **de tu repositorio**:
 
 ```bash
-git add .github/workflows/ci.yml
-git commit -m "ci: workflow mínimo"
-git push -u origin mi-ci
+git switch -c mi-prueba
+# edita README.md
+git add -A
+git commit -m "prueba: primer pull request"
+git push -u origin mi-prueba
 ```
 
 > Abre el PR desde el enlace que muestra `git push`, o desde la pestaña *Pull requests*. Comprueba que *base* sea `main` de **tu** repositorio.
 
-**Qué debes observar:** el check `tests` termina en **rojo**. Abre el paso `Run uv run pytest` y lee el mensaje: `Faltan variables para la base de pruebas`.
+2. Abre el check `tests` del PR, en la pestaña **Checks** o en **Actions**.
 
-**Pregunta 1:** ¿por qué falla si en tu computador pasan los 59 tests?
+**Qué debes observar:** el check termina en **rojo** y el job se detiene al iniciar la base de datos, antes de llegar a los tests. Abre el paso que falló y lee el mensaje.
 
-## Parte 2 — PostgreSQL como service y un secret (verde)
-
-1. **Crea el secret.** En tu repositorio: *Settings, Secrets and variables, Actions, New repository secret*. Nombre: `TEST_DB_PASSWORD`. Valor: la contraseña que quieras (la base de CI es desechable). El nombre debe ser exactamente ese.
-2. Agrega al job `tests` el bloque `services` y las variables `env`. El resultado completo del job es:
-
-```yaml
-# .github/workflows/ci.yml
-jobs:
-  tests:
-    runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres:17
-        env:
-          POSTGRES_USER: alumno
-          POSTGRES_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
-          POSTGRES_DB: clase_test
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U alumno -d clase_test"
-          --health-interval 5s
-          --health-timeout 5s
-          --health-retries 10
-
-    env:
-      TEST_DB_HOST: localhost
-      TEST_DB_PORT: 5432
-      TEST_DB_NAME: clase_test
-      TEST_DB_USER: alumno
-      TEST_DB_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
-
-    steps:
-      # ... los mismos pasos de la Parte 1
-```
-
-3. Haz commit y push: el PR se vuelve a ejecutar solo.
+3. **Crea el secret.** En tu repositorio: *Settings, Secrets and variables, Actions, New repository secret*. Nombre: `TEST_DB_PASSWORD` (exactamente ese). Valor: la contraseña que quieras, porque la base de CI es desechable.
+4. Vuelve al PR, entra a la ejecución fallida y pulsa **Re-run all jobs**.
 
 **Qué debes observar:** el check `tests` en **verde** y `59 passed` en el log.
 
-**Pregunta 2:** ¿para qué sirve el `--health-cmd`? ¿Qué pasaría sin él?
+**Pregunta 2:** ¿qué faltaba en el primer intento? ¿Por qué el secret no está escrito en el archivo del workflow?
 
 ## Parte 3 — Cobertura como compuerta
 
-Cambia el último paso por:
+1. Abre el log del paso `uv run pytest --cov` y busca la tabla de cobertura y la línea `Required test coverage of 85.0% reached`.
+2. El umbral está en `pyproject.toml` (`fail_under = 85`). En tu computador, comprueba qué pasa si la cobertura baja: comenta temporalmente uno de los tests de `tests/unit/test_estudiante.py` y corre `uv run pytest --cov`.
 
-```yaml
-      - run: uv run pytest --cov
-```
-
-**Qué debes observar:** en el log aparece la tabla de cobertura y la línea `Required test coverage of 85.0% reached`. El umbral está en `pyproject.toml` (`fail_under = 85`).
-
-**Pregunta 3:** ¿qué pasaría si borras tests y la cobertura baja de 85 %? Compruébalo en tu computador con `uv run pytest --cov`.
+**Pregunta 3:** ¿qué ocurre al bajar de 85 %? Restaura el test al terminar.
 
 ## Parte 4 — Proteger `main`
 
@@ -143,7 +84,7 @@ En tu repositorio: *Settings, Branches, Add branch protection rule* (o *Add clas
 - Activa **Require a pull request before merging**.
 - Activa **Require status checks to pass before merging**, y en el buscador elige **`tests`**.
 
-> El check aparece en la lista solo si ya se ejecutó al menos una vez. Si no lo ves, espera a que termine la ejecución de la Parte 2.
+> El check aparece en la lista solo si ya se ejecutó al menos una vez (Parte 2).
 > La regla exige el job por su nombre: si lo renombras en el YAML, deja de aplicar.
 > Las reglas de rama están disponibles en repositorios públicos con cuenta gratuita.
 
@@ -151,21 +92,15 @@ En tu repositorio: *Settings, Branches, Add branch protection rule* (o *Add clas
 
 ## Parte 5 — Caché y medición
 
-1. Anota el tiempo total de la última ejecución (pestaña Actions, la duración aparece junto a la ejecución).
-2. Activa el caché en el paso de `setup-uv`:
+El workflow ya activa el caché con `enable-cache: true` en el paso de `setup-uv`.
 
-```yaml
-      - uses: astral-sh/setup-uv@v10.3.3
-        with:
-          enable-cache: true
-```
+1. Anota el tiempo total de la primera ejecución verde (pestaña Actions).
+2. Pulsa **Re-run all jobs** en esa ejecución y anota el tiempo de la segunda.
+3. Compara el tiempo del paso `Run astral-sh/setup-uv` y el de `uv sync` en las dos ejecuciones.
 
-3. Haz push (primera ejecución con caché: crea el caché) y luego **vuelve a ejecutar** el workflow con *Re-run all jobs* (segunda ejecución: lo usa).
-4. Anota el tiempo de la segunda ejecución.
+**Qué debes observar:** en la segunda ejecución el paso de instalación de dependencias tarda menos, porque reutiliza el caché.
 
-**Qué debes observar:** el paso de instalación de dependencias baja de tiempo en la segunda ejecución.
-
-**Pregunta 4:** ¿cuánto ahorró el caché? ¿Qué cambio haría que el caché se descarte? (Pista: `uv.lock`.)
+**Pregunta 4:** ¿cuánto ahorró el caché? ¿Qué cambio haría que se descarte? (Pista: `uv.lock`.)
 
 ## Parte 6 — Romper un test a propósito
 
@@ -186,13 +121,32 @@ git push -u origin romper-test
 
 **Pregunta 5:** ¿qué habría pasado sin la regla de la Parte 4? ¿Y sin el pipeline?
 
+## Parte 7 (opcional) — Modifica el workflow
+
+Esta es la única parte en la que editas el `ci.yml`. Agrega un paso que guarde el reporte de cobertura para descargarlo desde la ejecución:
+
+1. Cambia el paso de pytest por `uv run pytest --cov --cov-report=html`.
+2. Agrega, después de ese paso:
+
+```yaml
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: cobertura
+          path: htmlcov/
+```
+
+3. Haz push y, en la ejecución, busca la sección **Artifacts** y descarga `cobertura`.
+
+**Pregunta 6:** ¿para qué sirve `if: always()`?
+
 ---
 
 ## Entregable
 
-1. Enlace al pull request de la Parte 2 con el check `tests` en verde.
+1. Enlace al pull request de la Parte 2, con el check `tests` en verde.
 2. Captura del pull request de la Parte 6 con el check en rojo y el merge bloqueado.
-3. Los dos tiempos de la Parte 5 (sin caché y con caché).
+3. Los dos tiempos de la Parte 5.
 4. Respuestas breves (máx. 5 líneas cada una) a las preguntas 1 a 5.
 
 ## Criterio de logro
@@ -205,10 +159,9 @@ git push -u origin romper-test
 
 | Síntoma | Causa probable |
 |---|---|
-| No aparece ninguna ejecución | El archivo no está en `.github/workflows/` (con esa ruta exacta) o no se subió con `git push`; revisa también la pestaña Actions. |
+| El check falla al iniciar la base, sin llegar a los tests | El secret `TEST_DB_PASSWORD` no existe o está mal escrito. |
 | El PR no muestra ningún check | El workflow solo corre en pull requests y en push a `main`; comprueba que el PR sea hacia `main`. |
-| `Faltan variables para la base de pruebas` | Faltan las `TEST_DB_*` en el bloque `env` del job, o el secret no existe. |
-| El job se queda esperando o falla al arrancar PostgreSQL | El secret `TEST_DB_PASSWORD` no existe o está mal escrito: la base no arranca sin contraseña. |
-| Error de YAML al subir | Indentación: el YAML usa 2 espacios y no acepta tabulaciones. |
+| `Faltan variables para la base de pruebas` en CI | Falta alguna variable `TEST_DB_*` en el bloque `env` del job. |
 | El check `tests` no aparece al crear la regla | El workflow todavía no se ejecutó, o el job tiene otro nombre. |
 | `connection refused` en los tests | El puerto del `service` no coincide con `TEST_DB_PORT` (ambos 5432). |
+| Error de YAML al editar el workflow (Parte 7) | Indentación: el YAML usa 2 espacios y no acepta tabulaciones. |
