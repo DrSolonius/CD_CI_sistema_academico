@@ -24,7 +24,7 @@ Cada carpeta necesita su `__init__.py`. Los fixtures `session`, `repository`, `s
 ## Preparación
 
 ```bash
-cp .env.example .env             # y completa TEST_DB_PASSWORD (y las demás claves)
+cp .env.example .env             # ya trae valores de práctica para los tests
 docker compose up -d db          # PostgreSQL; crea también la base de pruebas clase_test
 uv sync --group dev
 uv run pytest

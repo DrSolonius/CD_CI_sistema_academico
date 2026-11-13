@@ -23,13 +23,13 @@ cd CD_CI_sistema_academico
 3. Comprueba que los tests pasan en tu computador:
 
 ```bash
-cp .env.example .env             # completa TEST_DB_PASSWORD y las demás claves
+cp .env.example .env             # ya trae valores de práctica para los tests
 docker compose up -d db          # PostgreSQL; crea también la base clase_test
 uv sync --group dev
 uv run pytest
 ```
 
-Debes ver `59 passed`. Si ves `Faltan variables para la base de pruebas`, falta completar las líneas `TEST_DB_*` de tu `.env`.
+Debes ver `59 passed`. Si ves `Faltan variables para la base de pruebas`, falta alguna línea `TEST_DB_*` en tu `.env`. Para levantar la API (no para los tests) completa además `JWT_SECRET` y `ADMIN_PASSWORD`.
 
 > El repositorio no trae ningún workflow: la carpeta `.github/workflows/` no existe, y la creas tú en la Parte 1.
 
