@@ -43,32 +43,32 @@ El proyecto incluye un **`docker-compose.yml`** que levanta **dos contenedores**
 Clona el repositorio:
 
 ```bash
-git clone https://github.com/DrSolonius/JWT_auth_backend.git
-cd JWT_auth_backend
+git clone https://github.com/DrSolonius/CD_CI_sistema_academico.git
+cd CD_CI_sistema_academico
 ```
 
-Copia `.env.example` como `.env` y completa tus datos:
+Copia `.env.example` como `.env`. Ya trae valores de práctica, así que con solo copiarlo puedes correr los tests y levantar el sistema:
 
 ```text
-DB_HOST=localhost
+DB_HOST=127.0.0.1
 DB_PORT=5433
 DB_NAME=clase
 DB_USER=alumno
 DB_PASSWORD=mi_clave_segura
 
-JWT_SECRET=pega-aqui-tu-secreto
+JWT_SECRET=secreto-de-practica-solo-para-clase-no-usar-en-produccion-0123456789
 ACCESS_TOKEN_MINUTOS=15
 REFRESH_TOKEN_DIAS=7
 COOKIE_SECURE=false
 ```
 
-Genera un `JWT_SECRET` propio (uno por persona y por entorno):
+Ese `JWT_SECRET` es solo de práctica. Para cualquier uso real, genera uno propio (uno por persona y por entorno):
 
 ```bash
 python -c "import secrets; print(secrets.token_urlsafe(64))"
 ```
 
-El archivo `.env` contiene credenciales y el secreto que firma los tokens: está en `.gitignore` y **no se sube al repositorio**. En `.env.example` el `JWT_SECRET` queda vacío a propósito.
+El archivo `.env` contiene credenciales y el secreto que firma los tokens: está en `.gitignore` y **no se sube al repositorio**. En `.env.example` el `JWT_SECRET` es un valor de práctica: sirve para clase y no debe usarse fuera de ella.
 
 ---
 
@@ -107,7 +107,7 @@ El archivo `.env` contiene credenciales y el secreto que firma los tokens: está
 
 Cómo se conectan:
 
-- **La API habla con la base por la red interna de Docker.** Ahí la base se llama `db` y escucha en el 5432, por eso el compose le pasa `DB_HOST: db` y `DB_PORT: 5432` a la API, aunque tu `.env` diga `localhost` y `5433`.
+- **La API habla con la base por la red interna de Docker.** Ahí la base se llama `db` y escucha en el 5432, por eso el compose le pasa `DB_HOST: db` y `DB_PORT: 5432` a la API, aunque tu `.env` diga `127.0.0.1` y `5433`.
 - **Desde tu PC entras por los puertos publicados:** `localhost:8080` para la API y `localhost:5433` para la base. Se usa el 5433 para no chocar con un PostgreSQL instalado localmente en el 5432.
 - **El `.env` no entra a la imagen** (está en `.dockerignore`): compose lo lee al arrancar y reemplaza cada `${VARIABLE}` antes de crear los contenedores. Si falta `JWT_SECRET`, se detiene con `Falta JWT_SECRET en el archivo .env`.
 
@@ -177,7 +177,7 @@ Al iniciar, si la base de datos está vacía, los seeders cargan datos de prueba
 ## Estructura del proyecto
 
 ```text
-JWT_auth_backend/
+CD_CI_sistema_academico/
 ├── .vscode/
 │   ├── launch.json
 │   └── settings.json
@@ -732,7 +732,7 @@ Las tablas **no** se crean al iniciar la API: se crean y modifican con migracion
 | `uv run alembic revision --autogenerate --rev-id 0005 -m "mensaje"` | Crea una migración comparando los modelos con la base de datos. `--rev-id` mantiene la numeración. |
 | `uv run alembic check` | Indica si hay cambios en los modelos sin migración. |
 
-Para correr Alembic desde tu PC contra la base de datos de Docker, el contenedor `db` debe estar encendido (`docker compose up -d db`) y el `.env` debe tener `DB_HOST=localhost` y `DB_PORT=5433`.
+Para correr Alembic desde tu PC contra la base de datos de Docker, el contenedor `db` debe estar encendido (`docker compose up -d db`) y el `.env` debe tener `DB_HOST=127.0.0.1` y `DB_PORT=5433`.
 
 Flujo para cambiar un modelo (por ejemplo, agregar una columna):
 

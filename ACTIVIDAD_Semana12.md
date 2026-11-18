@@ -29,7 +29,9 @@ uv sync --group dev
 uv run pytest
 ```
 
-Debes ver `59 passed`. Si ves `Faltan variables para la base de pruebas`, falta alguna línea `TEST_DB_*` en tu `.env`. Para levantar la API (no para los tests) completa además `JWT_SECRET` y `ADMIN_PASSWORD`.
+> **En Windows (PowerShell):** `cp` funciona como alias de `Copy-Item`. Deja `DB_HOST` y `TEST_DB_HOST` en `127.0.0.1` (no `localhost`) y `TEST_DB_PASSWORD` igual a `DB_PASSWORD`.
+
+Debes ver `59 passed`. Si ves `Faltan variables para la base de pruebas`, falta alguna línea `TEST_DB_*` en tu `.env`. El `.env.example` ya trae valores de práctica de `JWT_SECRET` y `ADMIN_PASSWORD`; sin `JWT_SECRET`, `docker compose` se detiene incluso con `docker compose up -d db`. Para levantar también la API: `docker compose up -d --build`, y se abre en `http://localhost:8080/docs`.
 
 ---
 
@@ -160,7 +162,8 @@ Esta es la única parte en la que editas el `ci.yml`. Agrega un paso que guarde 
 | Síntoma | Causa probable |
 |---|---|
 | El check falla al iniciar la base, sin llegar a los tests | El secret `TEST_DB_PASSWORD` no existe o está mal escrito. |
-| El PR no muestra ningún check | El workflow solo corre en pull requests y en push a `main`; comprueba que el PR sea hacia `main`. |
+| El PR no muestra ningún check | El workflow corre en cada `push` y en cada pull request; comprueba en la pestaña **Actions** que el run exista y que `ci.yml` esté en la rama. |
+| En local: `password authentication failed for user "alumno"` | `TEST_DB_PASSWORD` distinta de `DB_PASSWORD` en tu `.env`, o `localhost` llegando por IPv6 a otro servicio (WSL). Usa `127.0.0.1` en `DB_HOST` y `TEST_DB_HOST`. |
 | `Faltan variables para la base de pruebas` en CI | Falta alguna variable `TEST_DB_*` en el bloque `env` del job. |
 | El check `tests` no aparece al crear la regla | El workflow todavía no se ejecutó, o el job tiene otro nombre. |
 | `connection refused` en los tests | El puerto del `service` no coincide con `TEST_DB_PORT` (ambos 5432). |
