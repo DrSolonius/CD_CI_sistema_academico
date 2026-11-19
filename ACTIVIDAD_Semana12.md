@@ -171,7 +171,7 @@ Esta es la única parte en la que editas el `ci.yml`. Agrega un paso que guarde 
 | Síntoma | Causa probable |
 |---|---|
 | El check falla al iniciar la base, sin llegar a los tests | El secret `TEST_DB_PASSWORD` no existe o está mal escrito. |
-| El PR no muestra ningún check | El workflow corre en cada `push` y en cada pull request; comprueba en la pestaña **Actions** que el run exista y que `ci.yml` esté en la rama. |
+| El PR no muestra ningún check | El workflow corre en cada `push` a `main` y en cada pull request (un push a otra rama sin PR no lo activa); comprueba en la pestaña **Actions** que el run exista y que `ci.yml` esté en la rama. |
 | En local: `password authentication failed for user "alumno"` | `TEST_DB_PASSWORD` distinta de `DB_PASSWORD` en tu `.env`, o `localhost` llegando por IPv6 a otro servicio (WSL). Usa `127.0.0.1` en `DB_HOST` y `TEST_DB_HOST`. |
 | `Faltan variables para la base de pruebas` en CI | Falta alguna variable `TEST_DB_*` en el bloque `env` del job. |
 | El check `tests` no aparece al crear la regla | El workflow todavía no se ejecutó, o el job tiene otro nombre. |
