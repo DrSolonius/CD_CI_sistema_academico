@@ -26,7 +26,6 @@ from infrastructure.repositories.usuario_repository import UsuarioRepository
 from infrastructure.security.jwt_service import JwtService
 from infrastructure.security.password_hasher import PasswordHasher
 
-
 # Una sola instancia por proceso: crearlas cuesta (el hasher calcula el hash ficticio).
 _hasher = PasswordHasher()
 _jwt_service = JwtService()
@@ -78,9 +77,7 @@ def get_auth_service(session: SessionDep) -> AuthService:
 
 # auto_error=False: respondemos nosotros siempre 401 con WWW-Authenticate.
 bearer = HTTPBearer(auto_error=False)
-CredencialesDep = Annotated[
-    HTTPAuthorizationCredentials | None, Depends(bearer)
-]
+CredencialesDep = Annotated[HTTPAuthorizationCredentials | None, Depends(bearer)]
 
 
 def get_usuario_actual(
@@ -103,11 +100,7 @@ def get_usuario_actual(
 
     usuario = UsuarioRepository(session).obtener_por_id(int(payload["sub"]))
 
-    if (
-        usuario is None
-        or not usuario.activo
-        or usuario.token_version != payload.get("ver")
-    ):
+    if usuario is None or not usuario.activo or usuario.token_version != payload.get("ver"):
         raise no_autenticado
 
     return usuario

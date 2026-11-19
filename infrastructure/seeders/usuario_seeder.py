@@ -1,6 +1,5 @@
 from application.services.auth_service import AuthService
 
-
 EMAIL_ADMIN = "admin@academico.test"
 
 

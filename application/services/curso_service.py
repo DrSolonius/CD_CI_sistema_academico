@@ -99,6 +99,4 @@ class CursoService:
         existente = self.repository.obtener_por_codigo(codigo)
 
         if existente is not None and existente.id != curso_id:
-            raise ValueError(
-                "Ya existe un curso con ese código."
-            )
+            raise ValueError("Ya existe un curso con ese código.")

@@ -3,6 +3,7 @@
 A diferencia del fake, un Mock registra cómo lo llamaron: así podemos
 verificar que el servicio usó bien sus dependencias.
 """
+
 from unittest.mock import Mock
 
 import pytest

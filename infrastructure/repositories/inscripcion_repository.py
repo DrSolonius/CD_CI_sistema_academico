@@ -12,9 +12,7 @@ class InscripcionRepository:
         self.session = session
 
     def crear(self, inscripcion: Inscripcion) -> Inscripcion:
-        estudiante = self.session.get(
-            EstudianteModel, inscripcion.estudiante_id
-        )
+        estudiante = self.session.get(EstudianteModel, inscripcion.estudiante_id)
         curso = self.session.get(CursoModel, inscripcion.curso_id)
 
         # Al agregar el curso a la relación, SQLAlchemy inserta
@@ -65,14 +63,10 @@ class InscripcionRepository:
 
     def eliminar_por_estudiante(self, estudiante_id: int) -> None:
         self.session.execute(
-            delete(inscripciones).where(
-                inscripciones.c.estudiante_id == estudiante_id
-            )
+            delete(inscripciones).where(inscripciones.c.estudiante_id == estudiante_id)
         )
         self.session.commit()
 
     def eliminar_por_curso(self, curso_id: int) -> None:
-        self.session.execute(
-            delete(inscripciones).where(inscripciones.c.curso_id == curso_id)
-        )
+        self.session.execute(delete(inscripciones).where(inscripciones.c.curso_id == curso_id))
         self.session.commit()

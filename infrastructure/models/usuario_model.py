@@ -15,6 +15,4 @@ class UsuarioModel(Base):
     activo: Mapped[bool] = mapped_column(Boolean, default=True)
     token_version: Mapped[int] = mapped_column(Integer, default=0)
     intentos_fallidos: Mapped[int] = mapped_column(Integer, default=0)
-    bloqueado_hasta: Mapped[datetime | None] = mapped_column(
-        DateTime(timezone=True)
-    )
+    bloqueado_hasta: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

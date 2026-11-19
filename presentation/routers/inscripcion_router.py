@@ -17,7 +17,6 @@ from presentation.dependencies import (
 from presentation.schemas.dtos.curso_dto import CursoResponseDTO
 from presentation.schemas.dtos.estudiante_dto import EstudianteResponseDTO
 
-
 router = APIRouter(
     tags=["Inscripciones"],
     dependencies=[Depends(get_usuario_actual)],
@@ -114,7 +113,4 @@ def listar_estudiantes_de_curso(curso_id: CursoId, service: ServiceDep):
             detail=str(error),
         ) from error
 
-    return [
-        EstudianteResponseDTO.model_validate(estudiante)
-        for estudiante in estudiantes
-    ]
+    return [EstudianteResponseDTO.model_validate(estudiante) for estudiante in estudiantes]

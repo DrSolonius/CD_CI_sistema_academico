@@ -39,9 +39,7 @@ def cargar_datos_iniciales() -> None:
         if estudiante_repository.contar() > 0:
             return
 
-        seed_estudiantes(
-            EstudianteService(estudiante_repository, inscripcion_repository)
-        )
+        seed_estudiantes(EstudianteService(estudiante_repository, inscripcion_repository))
         seed_cursos(CursoService(curso_repository, inscripcion_repository))
         seed_inscripciones(
             InscripcionService(

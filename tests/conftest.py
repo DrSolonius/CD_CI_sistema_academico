@@ -5,6 +5,7 @@ APARTE: ``clase_test`` (la crea db-init/01-crear-base-de-pruebas.sh).
 Las tablas se crean una vez con Alembic y, después de cada test, se vacían:
 así ningún test depende del resultado de otro (independencia entre tests).
 """
+
 import os
 
 from dotenv import load_dotenv
@@ -19,7 +20,8 @@ _VARIABLES = ("USER", "PASSWORD", "HOST", "PORT", "NAME")
 _faltan = [f"TEST_DB_{v}" for v in _VARIABLES if not os.environ.get(f"TEST_DB_{v}")]
 if _faltan:
     raise RuntimeError(
-        "Faltan variables para la base de pruebas: " + ", ".join(_faltan)
+        "Faltan variables para la base de pruebas: "
+        + ", ".join(_faltan)
         + ". Cópialas desde .env.example a tu .env (o defínelas en el entorno)."
     )
 
@@ -50,12 +52,6 @@ from app.main import app  # noqa: E402
 from application.services.estudiante_service import EstudianteService  # noqa: E402
 from domain.usuario import Usuario  # noqa: E402
 from infrastructure.database import Base, engine  # noqa: E402
-from infrastructure.repositories.estudiante_repository import (  # noqa: E402
-    EstudianteRepository,
-)
-from infrastructure.repositories.inscripcion_repository import (  # noqa: E402
-    InscripcionRepository,
-)
 
 # Importar los modelos registra las tablas en Base.metadata.
 from infrastructure.models import (  # noqa: E402, F401
@@ -64,6 +60,12 @@ from infrastructure.models import (  # noqa: E402, F401
     inscripcion_model,
     refresh_token_model,
     usuario_model,
+)
+from infrastructure.repositories.estudiante_repository import (  # noqa: E402
+    EstudianteRepository,
+)
+from infrastructure.repositories.inscripcion_repository import (  # noqa: E402
+    InscripcionRepository,
 )
 from presentation.dependencies import (  # noqa: E402
     get_session,

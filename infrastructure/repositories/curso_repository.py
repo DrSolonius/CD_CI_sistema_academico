@@ -41,18 +41,13 @@ class CursoRepository:
 
     def listar(self, offset: int, limite: int) -> list[Curso]:
         modelos = self.session.scalars(
-            select(CursoModel)
-            .order_by(CursoModel.id)
-            .offset(offset)
-            .limit(limite)
+            select(CursoModel).order_by(CursoModel.id).offset(offset).limit(limite)
         ).all()
 
         return [curso_mapper.a_dominio(modelo) for modelo in modelos]
 
     def contar(self) -> int:
-        return self.session.scalar(
-            select(func.count()).select_from(CursoModel)
-        )
+        return self.session.scalar(select(func.count()).select_from(CursoModel))
 
     def actualizar(self, curso: Curso) -> Curso:
         modelo = self.session.get(CursoModel, curso.id)

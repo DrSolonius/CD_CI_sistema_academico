@@ -99,6 +99,4 @@ class EstudianteService:
         existente = self.repository.obtener_por_email(email)
 
         if existente is not None and existente.id != estudiante_id:
-            raise ValueError(
-                "Ya existe un estudiante con ese email."
-            )
+            raise ValueError("Ya existe un estudiante con ese email.")

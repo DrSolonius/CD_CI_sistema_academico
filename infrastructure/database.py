@@ -5,7 +5,6 @@ from sqlalchemy import create_engine
 from sqlalchemy.engine import URL
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
-
 # Lee el archivo .env (busca en esta carpeta y en las superiores).
 load_dotenv()
 
@@ -26,5 +25,6 @@ SessionLocal = sessionmaker(bind=engine, autoflush=False)
 
 class Base(DeclarativeBase):
     pass
+
 
 # Las tablas se crean con Alembic: uv run alembic upgrade head

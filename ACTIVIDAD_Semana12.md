@@ -31,6 +31,15 @@ uv run pytest
 
 > **En Windows (PowerShell):** `cp` funciona como alias de `Copy-Item`. Deja `DB_HOST` y `TEST_DB_HOST` en `127.0.0.1` (no `localhost`) y `TEST_DB_PASSWORD` igual a `DB_PASSWORD`.
 
+Revisa también el estilo del código (lo mismo que hace el job `lint` del CI):
+
+```bash
+uv run ruff check .             # lint: errores probables, imports sin usar
+uv run ruff format --check .    # formato: dice qué archivos cambiaría
+```
+
+Para corregir: `uv run ruff check . --fix` y `uv run ruff format .`.
+
 Debes ver `59 passed`. Si ves `Faltan variables para la base de pruebas`, falta alguna línea `TEST_DB_*` en tu `.env`. El `.env.example` ya trae valores de práctica de `JWT_SECRET` y `ADMIN_PASSWORD`; sin `JWT_SECRET`, `docker compose` se detiene incluso con `docker compose up -d db`. Para levantar también la API: `docker compose up -d --build`, y se abre en `http://localhost:8080/docs`.
 
 ---
@@ -166,5 +175,6 @@ Esta es la única parte en la que editas el `ci.yml`. Agrega un paso que guarde 
 | En local: `password authentication failed for user "alumno"` | `TEST_DB_PASSWORD` distinta de `DB_PASSWORD` en tu `.env`, o `localhost` llegando por IPv6 a otro servicio (WSL). Usa `127.0.0.1` en `DB_HOST` y `TEST_DB_HOST`. |
 | `Faltan variables para la base de pruebas` en CI | Falta alguna variable `TEST_DB_*` en el bloque `env` del job. |
 | El check `tests` no aparece al crear la regla | El workflow todavía no se ejecutó, o el job tiene otro nombre. |
+| El job `lint` falla en CI | Corre `uv run ruff check . --fix` y `uv run ruff format .` en tu computador, y haz commit de los cambios. |
 | `connection refused` en los tests | El puerto del `service` no coincide con `TEST_DB_PORT` (ambos 5432). |
 | Error de YAML al editar el workflow (Parte 7) | Indentación: el YAML usa 2 espacios y no acepta tabulaciones. |

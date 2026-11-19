@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 
-
 MAX_INTENTOS = 5
 MINUTOS_BLOQUEO = 15
 

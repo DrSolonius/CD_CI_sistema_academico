@@ -3,6 +3,7 @@
 Usamos un repositorio FALSO (fake): el servicio se prueba aislado,
 sin depender del repositorio real.
 """
+
 import pytest
 
 from application.services.estudiante_service import EstudianteService
@@ -58,9 +59,7 @@ def test_pagina_menor_a_1_es_rechazada(service, pagina):
     "pagina, tamano, offset_esperado",
     [(1, 10, 0), (2, 10, 10), (3, 25, 50)],
 )
-def test_el_servicio_calcula_el_offset(
-    service, repo_falso, pagina, tamano, offset_esperado
-):
+def test_el_servicio_calcula_el_offset(service, repo_falso, pagina, tamano, offset_esperado):
     service.listar(pagina=pagina, tamano=tamano)
 
     assert repo_falso.llamadas == [(offset_esperado, tamano)]

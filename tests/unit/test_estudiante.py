@@ -2,6 +2,7 @@
 
 No hay servicio, repositorio ni HTTP: solo la regla de negocio.
 """
+
 import pytest
 
 from domain.estudiante import Estudiante
@@ -42,9 +43,7 @@ def test_espacios_alrededor_se_eliminan():
     ],
 )
 @pytest.mark.parametrize("valor_invalido", ["", "   "])
-def test_campos_obligatorios_vacios_son_rechazados(
-    campo, mensaje, valor_invalido
-):
+def test_campos_obligatorios_vacios_son_rechazados(campo, mensaje, valor_invalido):
     with pytest.raises(ValueError, match=mensaje):
         crear_estudiante(**{campo: valor_invalido})
 

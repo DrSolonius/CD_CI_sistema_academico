@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from uuid import uuid4
 
 import jwt
@@ -9,7 +9,7 @@ from infrastructure.security import config
 
 class JwtService:
     def crear_access_token(self, usuario_id: int, version: int) -> str:
-        ahora = datetime.now(timezone.utc)
+        ahora = datetime.now(UTC)
         payload = {
             "sub": str(usuario_id),
             "type": "access",
@@ -19,9 +19,7 @@ class JwtService:
             "jti": uuid4().hex,
         }
 
-        return jwt.encode(
-            payload, config.JWT_SECRET, algorithm=config.JWT_ALGORITMO
-        )
+        return jwt.encode(payload, config.JWT_SECRET, algorithm=config.JWT_ALGORITMO)
 
     def decodificar_access_token(self, token: str) -> dict:
         try:

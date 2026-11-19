@@ -2,7 +2,6 @@ from fastapi import Response
 
 from infrastructure.security import config
 
-
 NOMBRE_COOKIE = "refresh_token"
 RUTA_COOKIE = "/auth"
 

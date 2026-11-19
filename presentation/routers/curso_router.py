@@ -14,15 +14,13 @@ from application.services.curso_service import CursoService
 from presentation.dependencies import get_curso_service, get_usuario_actual
 from presentation.schemas.dtos.curso_dto import (
     CursoCreateDTO,
-    CursoUpdateDTO,
-    CursoResponseDTO,
     CursoPaginaDTO,
+    CursoResponseDTO,
+    CursoUpdateDTO,
 )
-
 from presentation.schemas.dtos.curso_query_dto import (
     CursoQueryDTO,
 )
-
 
 router = APIRouter(
     prefix="/cursos",
@@ -68,10 +66,7 @@ def listar_cursos(
     )
 
     return CursoPaginaDTO(
-        items=[
-            CursoResponseDTO.model_validate(curso)
-            for curso in cursos
-        ],
+        items=[CursoResponseDTO.model_validate(curso) for curso in cursos],
         total=total,
         pagina=query.pagina,
         tamano=query.tamano,

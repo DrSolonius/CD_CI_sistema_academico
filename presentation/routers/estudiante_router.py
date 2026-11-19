@@ -17,15 +17,13 @@ from presentation.dependencies import (
 )
 from presentation.schemas.dtos.estudiante_dto import (
     EstudianteCreateDTO,
-    EstudianteUpdateDTO,
-    EstudianteResponseDTO,
     EstudiantePaginaDTO,
+    EstudianteResponseDTO,
+    EstudianteUpdateDTO,
 )
-
 from presentation.schemas.dtos.estudiante_query_dto import (
     EstudianteQueryDTO,
 )
-
 
 router = APIRouter(
     prefix="/estudiantes",
@@ -71,10 +69,7 @@ def listar_estudiantes(
     )
 
     return EstudiantePaginaDTO(
-        items=[
-            EstudianteResponseDTO.model_validate(estudiante)
-            for estudiante in estudiantes
-        ],
+        items=[EstudianteResponseDTO.model_validate(estudiante) for estudiante in estudiantes],
         total=total,
         pagina=query.pagina,
         tamano=query.tamano,

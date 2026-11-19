@@ -14,7 +14,7 @@ class EstudianteModel(Base):
     email: Mapped[str] = mapped_column(String(254), unique=True, index=True)
     activo: Mapped[bool] = mapped_column(Boolean, default=True)
 
-    cursos: Mapped[list["CursoModel"]] = relationship(  # noqa: F821
+    cursos: Mapped[list[CursoModel]] = relationship(  # noqa: F821
         secondary=inscripciones,
         back_populates="estudiantes",
     )

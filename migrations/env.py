@@ -14,7 +14,6 @@ from infrastructure.models import (  # noqa: F401
     usuario_model,
 )
 
-
 config = context.config
 
 if config.config_file_name is not None:

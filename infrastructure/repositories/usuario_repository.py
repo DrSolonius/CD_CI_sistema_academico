@@ -39,9 +39,7 @@ class UsuarioRepository:
         email_buscado = email.strip().lower()
 
         modelo = self.session.scalars(
-            select(UsuarioModel).where(
-                func.lower(UsuarioModel.email) == email_buscado
-            )
+            select(UsuarioModel).where(func.lower(UsuarioModel.email) == email_buscado)
         ).first()
 
         if modelo is None:

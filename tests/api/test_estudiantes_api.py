@@ -28,9 +28,7 @@ def test_post_con_email_duplicado_responde_400(client):
     response = crear_por_api(client)
 
     assert response.status_code == 400
-    assert response.json() == {
-        "detail": "Ya existe un estudiante con ese email."
-    }
+    assert response.json() == {"detail": "Ya existe un estudiante con ese email."}
 
 
 def test_post_con_campo_faltante_responde_422(client):

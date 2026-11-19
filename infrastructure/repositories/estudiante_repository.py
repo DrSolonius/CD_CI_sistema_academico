@@ -31,9 +31,7 @@ class EstudianteRepository:
         email_buscado = email.strip().lower()
 
         modelo = self.session.scalars(
-            select(EstudianteModel).where(
-                func.lower(EstudianteModel.email) == email_buscado
-            )
+            select(EstudianteModel).where(func.lower(EstudianteModel.email) == email_buscado)
         ).first()
 
         if modelo is None:
@@ -43,18 +41,13 @@ class EstudianteRepository:
 
     def listar(self, offset: int, limite: int) -> list[Estudiante]:
         modelos = self.session.scalars(
-            select(EstudianteModel)
-            .order_by(EstudianteModel.id)
-            .offset(offset)
-            .limit(limite)
+            select(EstudianteModel).order_by(EstudianteModel.id).offset(offset).limit(limite)
         ).all()
 
         return [estudiante_mapper.a_dominio(modelo) for modelo in modelos]
 
     def contar(self) -> int:
-        return self.session.scalar(
-            select(func.count()).select_from(EstudianteModel)
-        )
+        return self.session.scalar(select(func.count()).select_from(EstudianteModel))
 
     def actualizar(self, estudiante: Estudiante) -> Estudiante:
         modelo = self.session.get(EstudianteModel, estudiante.id)

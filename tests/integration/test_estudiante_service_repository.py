@@ -2,6 +2,7 @@
 
 Aquí no hay falsos: verificamos que las dos piezas colaboren bien.
 """
+
 import pytest
 
 
@@ -36,9 +37,7 @@ def test_email_duplicado_ignora_mayusculas(service):
 def test_actualizar_puede_conservar_el_propio_email(service):
     creado = service.crear("Ana", "Pérez", "ana@example.com")
 
-    actualizado = service.actualizar(
-        creado.id, "Ana María", "Pérez", "ana@example.com"
-    )
+    actualizado = service.actualizar(creado.id, "Ana María", "Pérez", "ana@example.com")
 
     assert actualizado.nombre == "Ana María"
 

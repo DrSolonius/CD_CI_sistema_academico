@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from sqlalchemy import select, update
 from sqlalchemy.orm import Session
@@ -23,9 +23,7 @@ class RefreshTokenRepository:
 
     def obtener_por_hash(self, token_hash: str) -> RefreshToken | None:
         modelo = self.session.scalars(
-            select(RefreshTokenModel).where(
-                RefreshTokenModel.token_hash == token_hash
-            )
+            select(RefreshTokenModel).where(RefreshTokenModel.token_hash == token_hash)
         ).first()
 
         if modelo is None:
@@ -36,7 +34,7 @@ class RefreshTokenRepository:
     def rotar(self, actual: RefreshToken, nuevo: RefreshToken) -> None:
         """Revoca el token actual y guarda el nuevo en un solo commit."""
         modelo = self.session.get(RefreshTokenModel, actual.id)
-        modelo.revocado_en = datetime.now(timezone.utc)
+        modelo.revocado_en = datetime.now(UTC)
         self.session.add(refresh_token_mapper.a_modelo(nuevo))
         self.session.commit()
 
@@ -47,7 +45,7 @@ class RefreshTokenRepository:
                 RefreshTokenModel.familia_id == familia_id,
                 RefreshTokenModel.revocado_en.is_(None),
             )
-            .values(revocado_en=datetime.now(timezone.utc))
+            .values(revocado_en=datetime.now(UTC))
         )
         self.session.commit()
 
@@ -58,6 +56,6 @@ class RefreshTokenRepository:
                 RefreshTokenModel.usuario_id == usuario_id,
                 RefreshTokenModel.revocado_en.is_(None),
             )
-            .values(revocado_en=datetime.now(timezone.utc))
+            .values(revocado_en=datetime.now(UTC))
         )
         self.session.commit()

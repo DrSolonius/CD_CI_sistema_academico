@@ -24,7 +24,6 @@ from presentation.security.cookies import (
     poner_cookie_refresh,
 )
 
-
 router = APIRouter(prefix="/auth", tags=["Autenticación"])
 
 AuthDep = Annotated[AuthService, Depends(get_auth_service)]

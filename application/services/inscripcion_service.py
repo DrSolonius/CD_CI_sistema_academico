@@ -37,9 +37,7 @@ class InscripcionService:
         )
 
         if self.repository.existe(inscripcion):
-            raise ValueError(
-                "El estudiante ya está inscrito en ese curso."
-            )
+            raise ValueError("El estudiante ya está inscrito en ese curso.")
 
         self.repository.crear(inscripcion)
 
@@ -66,9 +64,7 @@ class InscripcionService:
 
         return [
             self._obtener_estudiante(estudiante_id)
-            for estudiante_id in self.repository.listar_estudiantes_ids(
-                curso_id
-            )
+            for estudiante_id in self.repository.listar_estudiantes_ids(curso_id)
         ]
 
     def _obtener_estudiante(self, estudiante_id: int) -> Estudiante:
