@@ -6,3 +6,6 @@ __pycache__/
 .coverage
 *.pptx
 htmlcov/
+
+# Guía de la actividad: solo local
+ACTIVIDAD_Semana13.md
